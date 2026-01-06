@@ -1,0 +1,32 @@
+<Solution>
+  <Folder Name="/Solution Items/.github/">
+    <File Path=".github/dependabot.yml" />
+  </Folder>
+   <Folder Name="/Solution Items/.github/codeql/" />
+  <Folder Name="/Solution Items/.github/workflows/">
+    <File Path=".github/workflows/build_release.yaml" />
+    <File Path=".github/workflows/ci.yaml" />
+    <File Path=".github/workflows/codeQL.yaml" />
+    <File Path=".github/workflows/delete-old-runs.yaml" />
+    <File Path=".github/workflows/publish_release.yaml" />
+  </Folder>
+  <Folder Name="/Samples/">
+    <Project Path="Samples/Nivaes.Otel.Backend.AppHost/Nivaes.Otel.Backend.AppHost.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Sources/">
+    <Project Path="Sources/Nivaes.Otel.Backend.ServiceDefaults/Nivaes.Otel.Backend.ServiceDefaults.csproj" />
+    <Project Path="Sources/Nivaes.Otel.Backend/Nivaes.Otel.Backend.csproj" />
+  </Folder>
+  <Folder Name="/Test/" />
+</Solution>
