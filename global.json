@@ -2,5 +2,8 @@
   "sdk": {
     "version": "10.0.101",
     "rollForward": "latestMajor"
+  },
+  "msbuild-sdks": {
+    "Aspire.AppHost.Sdk": "13.1.0"
   }
 }
