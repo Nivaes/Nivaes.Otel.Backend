@@ -1,4 +1,7 @@
-﻿namespace Nivaes.Otel.Backend;
+﻿using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+
+namespace Nivaes.Otel.Backend;
 
 public static class ProxyGrpc
 {
@@ -9,7 +12,10 @@ public static class ProxyGrpc
         var builder = WebApplication.CreateBuilder(args);
         builder.WebHost.ConfigureKestrel(options =>
         {
-            options.ListenAnyIP(4317);
+            options.ListenAnyIP(4317, o =>
+            {
+                o.Protocols = HttpProtocols.Http2;
+            });
         });
         builder.Services.AddGrpc();
 
@@ -33,8 +39,6 @@ public static class ProxyGrpc
         //    options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
         //});
 
-        //builder.Services.AddOpenApi();
-
         builder.Logging.ClearProviders();
         builder.Logging.AddConsole();
         builder.Logging.SetMinimumLevel(LogLevel.Trace);
@@ -44,7 +48,8 @@ public static class ProxyGrpc
         // Middleware de logging
         app.Use(async (HttpContext context, RequestDelegate next) =>
         {
-            Console.WriteLine($"--> {context.Request.Method} {context.Request.Path}");
+            Console.WriteLine($"--> {DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.fff")}");
+            Console.WriteLine($"{context.Request.Method} {context.Request.Path}");
             Console.WriteLine("Grpc");
 
             foreach (var header in context.Request.Headers)
@@ -57,16 +62,15 @@ public static class ProxyGrpc
             Console.WriteLine($"<-- {context.Response.StatusCode}");
         });
 
-        //app.MapDefaultEndpoints();
-        //app.MapControllers();
-
-        //app.MapGet("/", async (HttpContext context, IHttpClientFactory httpFactory) =>
-        app.MapGet("{*catchall}", async (HttpContext context, IHttpClientFactory httpFactory) =>
+        // "/opentelemetry.proto.collector.trace.v1.TraceService/Export"
+        // "/opentelemetry.proto.collector.metrics.v1.MetricsService/Export"
+        // "/opentelemetry.proto.collector.logs.v1.LogsService / Export"
+        app.MapPost("{**path}", async (HttpContext context, IHttpClientFactory httpFactory) =>
         {
             var httpClient = httpFactory.CreateClient();
 
             var content = new StreamContent(context.Request.Body);
-            content.Headers.ContentType = content.Headers.ContentType; ///new System.Net.Http.Headers.MediaTypeHeaderValue(context.Request.ContentType ?? "application/octet-stream");
+            content.Headers.ContentType = new MediaTypeHeaderValue(context.Request.ContentType ?? "application/grpc");
 
             Console.WriteLine(content);
 
@@ -75,9 +79,9 @@ public static class ProxyGrpc
                 var response = await httpClient.PostAsync("http://otel-collector:4317", content);
                 return Results.StatusCode((int)response.StatusCode);
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message);
                 return Results.Ok();
             }
         });
