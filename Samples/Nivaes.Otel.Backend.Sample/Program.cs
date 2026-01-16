@@ -17,12 +17,22 @@ namespace Nivaes.Otel.Backend.Sample
             //await Test();
 
             {
-                using var tracerProvider = ConfigureTrazeOpenTelemetry();
+                using var tracerProvider = ConfigureTrazeOpenTelemetryGrpc();
                 await SendSpand(tracerProvider);
             }
 
             {
-                using var meterProvider = ConfigureMeterOpenTelemetry();
+                using var meterProvider = ConfigureMeterOpenTelemetryGrpc();
+                await SendMeter(meterProvider);
+            }
+
+            {
+                using var tracerProvider = ConfigureTrazeOpenTelemetryHtml();
+                await SendSpand(tracerProvider);
+            }
+
+            {
+                using var meterProvider = ConfigureMeterOpenTelemetryHtml();
                 await SendMeter(meterProvider);
             }
 
@@ -35,15 +45,13 @@ namespace Nivaes.Otel.Backend.Sample
             var content = new StringContent("texto a enviar"/*, Encoding.UTF8, "application/octet-stream"*/);
 
             using var response = await _http.PostAsync("http://localhost:4318/api/Telemetry/traces", content);
-            //using var response = await _http.GetAsync("http://localhost:5162/WeatherForecast");
 
-            //response.EnsureSuccessStatusCode(); // lanza excepción si no es 2xx
 
             var result = await response.Content.ReadAsStringAsync();
             Console.WriteLine(result);           
         }
 
-        static TracerProvider ConfigureTrazeOpenTelemetry()
+        static TracerProvider ConfigureTrazeOpenTelemetryGrpc()
         {
             var tracerProvider = Sdk.CreateTracerProviderBuilder()
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("MyApp"))
@@ -51,10 +59,23 @@ namespace Nivaes.Otel.Backend.Sample
                     .AddConsoleExporter()
                     .AddOtlpExporter(o =>
                     {
-                        //o.Endpoint = new Uri("http://localhost:4317");
-                        //o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                        o.Endpoint = new Uri("http://localhost:4317");
+                        o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                    })
+                .Build();
 
-                        o.Endpoint = new Uri("http://localhost:4318/v1/traces"); // Collector real
+            return tracerProvider;
+        }
+
+        static TracerProvider ConfigureTrazeOpenTelemetryHtml()
+        {
+            var tracerProvider = Sdk.CreateTracerProviderBuilder()
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("MyApp"))
+                    .AddSource("MyApp.Source")
+                    .AddConsoleExporter()
+                    .AddOtlpExporter(o =>
+                    {
+                        o.Endpoint = new Uri("http://localhost:4318/v1/traces");
                         o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                     })
                 .Build();
@@ -89,7 +110,23 @@ namespace Nivaes.Otel.Backend.Sample
             }
         }
 
-        static MeterProvider ConfigureMeterOpenTelemetry()
+        static MeterProvider ConfigureMeterOpenTelemetryGrpc()
+        {
+            var meterProvider = Sdk.CreateMeterProviderBuilder()
+            .SetResourceBuilder(
+                ResourceBuilder.CreateDefault()
+                    .AddService(serviceName: "my-metrics-service"))
+                     .AddMeter("MyApp.Metrics")
+                     .AddOtlpExporter(o =>
+                     {
+                         o.Endpoint = new Uri("http://localhost:4317");
+                         o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                     })
+                     .Build();
+            return meterProvider;
+        }
+
+        static MeterProvider ConfigureMeterOpenTelemetryHtml()
         {
            var meterProvider = Sdk.CreateMeterProviderBuilder()
            .SetResourceBuilder(
@@ -98,17 +135,13 @@ namespace Nivaes.Otel.Backend.Sample
                     .AddMeter("MyApp.Metrics")
                     .AddOtlpExporter(o =>
                     {
-                        // Opción A → HTTP/Protobuf (puerto 4318)
                         o.Endpoint = new Uri("http://localhost:4318/v1/metrics");
                         o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
-
-                        // Opción B → gRPC (puerto 4317)
-                        //o.Endpoint = new Uri("http://localhost:4317");
-                        //o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
                     })
                     .Build();
             return meterProvider;
         }
+
         static async Task SendMeter(MeterProvider meterProvider)
         {
             Meter _meter = new Meter("MyApp.Metrics", "1.0.0");

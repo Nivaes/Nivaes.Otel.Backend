@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Nivaes.Otel.Backend;
 
@@ -46,11 +47,13 @@ public static class ProxyHttpProtobuf
         // Middleware de logging
         app.Use(async (HttpContext context, RequestDelegate next) =>
             {
-                Console.WriteLine($"--> {context.Request.Method} {context.Request.Path}");
+                Console.WriteLine($"--> {DateTime.Now.Second}.{DateTime.Now.Millisecond}");
+                Console.WriteLine($"{context.Request.Method} {context.Request.Path}");
                 Console.WriteLine("HttpProtobuf");
 
                 foreach (var header in context.Request.Headers)
                 {
+                    Console.WriteLine($"StatusCode: {response.StatusCode.ToString()}");
                     Console.WriteLine($"{header.Key}: {header.Value}");
                 }
 
@@ -62,18 +65,69 @@ public static class ProxyHttpProtobuf
         //app.MapDefaultEndpoints();
         //app.MapControllers();
 
-        //app.MapGet("/", async (HttpContext context, IHttpClientFactory httpFactory) =>
-        app.MapGet("{*catchall}", async (HttpContext context, IHttpClientFactory httpFactory) =>
+        app.MapPost("/v1/traces", async (HttpContext context, IHttpClientFactory httpFactory) =>
         {
             var httpClient = httpFactory.CreateClient();
 
             var content = new StreamContent(context.Request.Body);
-            content.Headers.ContentType = content.Headers.ContentType; ///new System.Net.Http.Headers.MediaTypeHeaderValue(context.Request.ContentType ?? "application/octet-stream");
+            //content.Headers.ContentType = content.Headers.ContentType; ///new System.Net.Http.Headers.MediaTypeHeaderValue(context.Request.ContentType ?? "application/octet-stream");
 
             Console.WriteLine(content);
 
-            var response = await httpClient.PostAsync("http://otel-collector:4318/v1/traces", content);
-            return Results.StatusCode((int)response.StatusCode);
+            try
+            {
+                var response = await httpClient.PostAsync("http://otel-collector:4318/v1/traces", content);
+                Console.WriteLine($"StatusCode: {response.StatusCode.ToString()}");
+                return Results.StatusCode((int)response.StatusCode);
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Results.Ok();
+            }
+        });
+
+        app.MapPost("/v1/metrics", async (HttpContext context, IHttpClientFactory httpFactory) =>
+        {
+            var httpClient = httpFactory.CreateClient();
+
+            var content = new StreamContent(context.Request.Body);
+            //content.Headers.ContentType = content.Headers.ContentType; ///new System.Net.Http.Headers.MediaTypeHeaderValue(context.Request.ContentType ?? "application/octet-stream");
+
+            Console.WriteLine(content);
+
+            try
+            {
+                var response = await httpClient.PostAsync("http://otel-collector:4318/v1/metrics", content);
+                Console.WriteLine($"StatusCode: {response.StatusCode.ToString()}");
+                return Results.StatusCode((int)response.StatusCode);
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Results.Ok();
+            }
+        });
+
+        app.MapPost("/v1/logs", async (HttpContext context, IHttpClientFactory httpFactory) =>
+        {
+            var httpClient = httpFactory.CreateClient();
+
+            var content = new StreamContent(context.Request.Body);
+            //content.Headers.ContentType = content.Headers.ContentType; ///new System.Net.Http.Headers.MediaTypeHeaderValue(context.Request.ContentType ?? "application/octet-stream");
+
+            Console.WriteLine(content);
+
+            try
+            {
+                var response = await httpClient.PostAsync("http://otel-collector:4318/v1/logs", content);
+                return Results.StatusCode((int)response.StatusCode);
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Results.Ok();
+            }
         });
 
         return app.RunAsync();

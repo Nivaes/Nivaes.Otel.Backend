@@ -70,8 +70,16 @@ public static class ProxyGrpc
 
             Console.WriteLine(content);
 
-            var response = await httpClient.PostAsync("http://otel-collector:4317", content);
-            return Results.StatusCode((int)response.StatusCode);
+            try
+            {
+                var response = await httpClient.PostAsync("http://otel-collector:4317", content);
+                return Results.StatusCode((int)response.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return Results.Ok();
+            }
         });
 
         return app.RunAsync();
