@@ -11,10 +11,9 @@
     <File Path=".github/workflows/publish_release.yaml" />
   </Folder>
   <Folder Name="/Samples/">
-    <Project Path="Samples/Nivaes.Otel.Backend.AppHost/Nivaes.Otel.Backend.AppHost.csproj" />
+    <Project Path="Samples/Nivaes.Otel.Backend.Sample/Nivaes.Otel.Backend.Sample.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
-    <File Path=".dockerignore" />
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
     <File Path=".gitignore" />

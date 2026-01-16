@@ -1,11 +1,15 @@
-@Nivaes.Otel.Backend_HostAddress = http://localhost:5190
+@Nivaes.Otel.Backend_HostAddress = http://localhost:4318
 
-GET {{Nivaes.Otel.Backend_HostAddress}}/todos/
+GET {{Nivaes.Otel.Backend_HostAddress}}/
 Accept: application/json
 
 ###
 
-GET {{Nivaes.Otel.Backend_HostAddress}}/todos/1
+GET {{Nivaes.Otel.Backend_HostAddress}}/1
 Accept: application/json
+
+###
+
+POST {{Nivaes.Otel.Backend_HostAddress}}/api/telemetry/traces
 
 ###
