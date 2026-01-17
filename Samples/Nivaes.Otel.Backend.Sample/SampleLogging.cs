@@ -13,27 +13,14 @@ namespace Nivaes.Otel.Backend.Sample
     {
         public static ILoggerFactory ConfigureLogginOpenTelemetryGrpc()
         {
-            //    var meterProvider = Sdk.CreateMeterProviderBuilder()
-            //    .SetResourceBuilder(
-            //        ResourceBuilder.CreateDefault()
-            //            .AddService(serviceName: "my-metrics-service"))
-            //             .AddMeter("MyApp.Metrics")
-            //             .AddOtlpExporter(o =>
-            //             {
-            //                 o.Endpoint = new Uri("http://localhost:4317");
-            //                 o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
-            //             })
-            //             .Build();
-            //    return meterProvider;
-            //}
-
             var loggerFactory = LoggerFactory.Create(builder =>
             {
                 builder.AddOpenTelemetry(options =>
                 {
                     options.AddOtlpExporter(o =>
                     {
-                        o.Endpoint = new Uri("http://localhost:4317");
+                        //o.Endpoint = new Uri("http://localhost:4317");
+                        o.Endpoint = new Uri("http://localhost:32777");
                         o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
                     });
                 });
@@ -42,6 +29,26 @@ namespace Nivaes.Otel.Backend.Sample
 
             return loggerFactory;
         }
+
+        public static ILoggerFactory ConfigureLogginOpenTelemetryHtml()
+        {
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddOpenTelemetry(options =>
+                {
+                    options.AddOtlpExporter(o =>
+                    {
+                        //o.Endpoint = new Uri("http://localhost:4318/v1/logs");
+                        o.Endpoint = new Uri("http://localhost:32778/v1/logs");
+                        o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                    });
+                });
+
+            });
+
+            return loggerFactory;
+        }
+
 
         public static async Task SendLog(ILoggerFactory loggerFactory)
         {

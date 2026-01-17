@@ -16,7 +16,8 @@ namespace Nivaes.Otel.Backend.Sample
                      .AddMeter("MyApp.Metrics")
                      .AddOtlpExporter(o =>
                      {
-                         o.Endpoint = new Uri("http://localhost:4317");
+                         //o.Endpoint = new Uri("http://localhost:4317");
+                         o.Endpoint = new Uri("http://localhost:32777");
                          o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
                      })
                      .Build();
@@ -32,7 +33,8 @@ namespace Nivaes.Otel.Backend.Sample
                      .AddMeter("MyApp.Metrics")
                      .AddOtlpExporter(o =>
                      {
-                         o.Endpoint = new Uri("http://localhost:4318/v1/metrics");
+                         //o.Endpoint = new Uri("http://localhost:4318/v1/metrics");
+                         o.Endpoint = new Uri("http://localhost:32778/v1/metrics");
                          o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                      })
                      .Build();

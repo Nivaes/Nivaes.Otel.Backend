@@ -63,6 +63,8 @@ public static class ProxyHttpProtobuf
                 await next(context);
 
                 Console.WriteLine($"<-- {context.Response.StatusCode}");
+
+                Console.Out.Flush();
             });
 
         app.MapPost("/v1/traces", async (HttpContext context, IHttpClientFactory httpFactory) =>

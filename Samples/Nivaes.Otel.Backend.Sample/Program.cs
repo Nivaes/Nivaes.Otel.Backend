@@ -11,8 +11,6 @@ namespace Nivaes.Otel.Backend.Sample
     {
         static async Task Main(string[] args)
         {
-            Console.ReadKey();
-
             {
                 using var tracerProvider = SampleTracer.ConfigureTrazeOpenTelemetryGrpc();
                 await SampleTracer.SendSpand(tracerProvider);
@@ -35,6 +33,11 @@ namespace Nivaes.Otel.Backend.Sample
 
             {
                 using var loggerProvider = SampleLogging.ConfigureLogginOpenTelemetryGrpc();
+                await SampleLogging.SendLog(loggerProvider);
+            }
+
+            {
+                using var loggerProvider = SampleLogging.ConfigureLogginOpenTelemetryHtml();
                 await SampleLogging.SendLog(loggerProvider);
             }
 

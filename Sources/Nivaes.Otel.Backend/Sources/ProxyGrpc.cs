@@ -60,6 +60,8 @@ public static class ProxyGrpc
             await next(context);
 
             Console.WriteLine($"<-- {context.Response.StatusCode}");
+
+            Console.Out.Flush();
         });
 
         // "/opentelemetry.proto.collector.trace.v1.TraceService/Export"
