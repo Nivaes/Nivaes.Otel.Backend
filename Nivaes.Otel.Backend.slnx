@@ -4,11 +4,10 @@
   </Folder>
    <Folder Name="/Solution Items/.github/codeql/" />
   <Folder Name="/Solution Items/.github/workflows/">
-    <File Path=".github/workflows/build_release.yaml" />
     <File Path=".github/workflows/ci.yaml" />
     <File Path=".github/workflows/codeQL.yaml" />
     <File Path=".github/workflows/delete-old-runs.yaml" />
-    <File Path=".github/workflows/publish_release.yaml" />
+    <File Path=".github/workflows/publish_image_release.yaml" />
   </Folder>
   <Folder Name="/Samples/">
     <Project Path="Samples/Nivaes.Otel.Backend.Sample/Nivaes.Otel.Backend.Sample.csproj" />
