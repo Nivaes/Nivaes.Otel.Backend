@@ -26,6 +26,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <RestoreImplicitPackages>true</RestoreImplicitPackages>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>

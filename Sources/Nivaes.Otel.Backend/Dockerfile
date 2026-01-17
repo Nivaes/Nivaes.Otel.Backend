@@ -11,20 +11,19 @@ EXPOSE 4318
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Sources/Nivaes.Otel.Backend/Nivaes.Otel.Backend.csproj", "Nivaes.Otel.Backend/"]
-RUN dotnet restore "./Nivaes.Otel.Backend/Nivaes.Otel.Backend.csproj"
 COPY . .
-WORKDIR "/src/Nivaes.Otel.Backend"
-RUN dotnet build "./Nivaes.Otel.Backend.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet restore "./Sources/Nivaes.Otel.Backend/Nivaes.Otel.Backend.csproj"
+WORKDIR "/src/Sources/Nivaes.Otel.Backend"
+RUN dotnet build "./Nivaes.Otel.Backend.csproj" --configuration $BUILD_CONFIGURATION --output /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Nivaes.Otel.Backend.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Nivaes.Otel.Backend.csproj" --configuration $BUILD_CONFIGURATION --output /app/publish /p:UseAppHost=false
 
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["./Nivaes.Otel.Backend"]
+ENTRYPOINT ["dotnet", "./Nivaes.Otel.Backend.dll"]
