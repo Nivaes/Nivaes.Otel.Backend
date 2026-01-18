@@ -14,13 +14,12 @@ WORKDIR /src
 COPY . .
 RUN dotnet restore "./Sources/Nivaes.Otel.Backend/Nivaes.Otel.Backend.csproj"
 WORKDIR "/src/Sources/Nivaes.Otel.Backend"
-RUN dotnet build "./Nivaes.Otel.Backend.csproj" --configuration $BUILD_CONFIGURATION --output /app/build
+RUN dotnet build "./Nivaes.Otel.Backend.csproj" --configuration $BUILD_CONFIGURATION --output /app/build --no-restore
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Nivaes.Otel.Backend.csproj" --configuration $BUILD_CONFIGURATION --output /app/publish /p:UseAppHost=false
-
+RUN dotnet publish "./Nivaes.Otel.Backend.csproj" --configuration $BUILD_CONFIGURATION --output /app/publish /p:UseAppHost=false --no-build --no-restore
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final

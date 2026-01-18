@@ -27,7 +27,7 @@ jobs:
           docker build \
             --tag ${{ env.IMAGE_NAME }}:${{ env.DOCKER_TAG }} \
             --file ${{ env.CONTEXT_PATH }}/Dockerfile \
-            ${{ env.CONTEXT_PATH }}
+            .
 
       - name: Tag Docker image
         run: |
