@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -11,7 +12,7 @@ namespace Nivaes.Otel.Backend.Sample
 {
     internal class SampleLogging
     {
-        public static ILoggerFactory ConfigureLogginOpenTelemetryGrpc()
+        public static ILoggerFactory ConfigureLogginOpenTelemetryGrpc(string endpoint)
         {
             var loggerFactory = LoggerFactory.Create(builder =>
             {
@@ -19,9 +20,8 @@ namespace Nivaes.Otel.Backend.Sample
                 {
                     options.AddOtlpExporter(o =>
                     {
-                        //o.Endpoint = new Uri("http://localhost:4317");
-                        o.Endpoint = new Uri("http://localhost:32777");
-                        o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                        o.Endpoint = new Uri(endpoint);
+                        o.Protocol = OtlpExportProtocol.Grpc;
                     });
                 });
 
@@ -30,7 +30,7 @@ namespace Nivaes.Otel.Backend.Sample
             return loggerFactory;
         }
 
-        public static ILoggerFactory ConfigureLogginOpenTelemetryHtml()
+        public static ILoggerFactory ConfigureLogginOpenTelemetryHtml(string endpoint)
         {
             var loggerFactory = LoggerFactory.Create(builder =>
             {
@@ -38,9 +38,9 @@ namespace Nivaes.Otel.Backend.Sample
                 {
                     options.AddOtlpExporter(o =>
                     {
-                        //o.Endpoint = new Uri("http://localhost:4318/v1/logs");
-                        o.Endpoint = new Uri("http://localhost:32778/v1/logs");
-                        o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                        o.Endpoint = new Uri($"{endpoint}/v1/logs");
+                        //o.Endpoint = new Uri($"{endpoint}");
+                        o.Protocol = OtlpExportProtocol.HttpProtobuf;
                     });
                 });
 

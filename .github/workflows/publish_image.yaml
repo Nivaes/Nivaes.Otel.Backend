@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: nivaesotelbackend
+      IMAGE_NAME: nivaes-otel-backend
       CONTEXT_PATH: Sources/Nivaes.Otel.Backend
       DOCKER_TAG: ${{ github.sha }}
 

@@ -1,4 +1,5 @@
 ﻿using OpenTelemetry;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -6,34 +7,34 @@ namespace Nivaes.Otel.Backend.Sample
 {
     internal static class SampleTracer
     {
-        public static TracerProvider ConfigureTrazeOpenTelemetryGrpc()
+        public static TracerProvider ConfigureTrazeOpenTelemetryGrpc(string endpoint)
         {
             var tracerProvider = Sdk.CreateTracerProviderBuilder()
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("MyApp"))
                     .AddSource("MyApp.Source")
                     .AddConsoleExporter()
+                    .SetSampler(new TraceIdRatioBasedSampler(1))
                     .AddOtlpExporter(o =>
                     {
-                        //o.Endpoint = new Uri("http://localhost:4317");
-                        o.Endpoint = new Uri("http://localhost:32777");
-                        o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                        o.Endpoint = new Uri(endpoint);
+                        //o.Protocol = OtlpExportProtocol.Grpc;
                     })
                 .Build();
 
             return tracerProvider;
         }
 
-        public static TracerProvider ConfigureTrazeOpenTelemetryHtml()
+        public static TracerProvider ConfigureTrazeOpenTelemetryHtml(string endpoint)
         {
             var tracerProvider = Sdk.CreateTracerProviderBuilder()
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("MyApp"))
                     .AddSource("MyApp.Source")
                     .AddConsoleExporter()
+                    .SetSampler(new TraceIdRatioBasedSampler(1))
                     .AddOtlpExporter(o =>
                     {
-                        //o.Endpoint = new Uri("http://localhost:4318/v1/traces");
-                        o.Endpoint = new Uri("http://localhost:32778/v1/traces");
-                        o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+                        o.Endpoint = new Uri($"{endpoint}/v1/traces");
+                        o.Protocol = OtlpExportProtocol.HttpProtobuf;
                     })
                 .Build();
 

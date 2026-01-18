@@ -2,21 +2,21 @@
   "profiles": {
     "http": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:4318"
+      //"applicationUrl": "http://localhost:4318"
     },
     "Container (Dockerfile)": {
       "commandName": "Docker",
-      "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
-      "environmentVariables": {
-        "ASPNETCORE_HTTP_PORTS": "4318"
-      },
+      "launchBrowser": false,
+      //"launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      //"environmentVariables": {
+      //  "ASPNETCORE_HTTP_PORTS": "4318"
+      //},
       "publishAllPorts": true,
       "useSSL": false
     }
